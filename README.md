@@ -1,2 +1,2 @@
-# logster-parsers
-Parsers for logster
+# pygster-parsers
+Parsers for pygster
