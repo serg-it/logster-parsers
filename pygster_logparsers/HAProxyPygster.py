@@ -1,6 +1,7 @@
-import time
+import optparse
 import re
 from pygster.pygster_helper import PygsterParsingException, PygsterParser, MetricObject
+from raven import Client
 
 
 class HAProxyPygster(PygsterParser):
@@ -8,6 +9,19 @@ class HAProxyPygster(PygsterParser):
     def __init__(self, option_string=None):
         '''Initialize any data structures or variables needed for keeping track
         of the tasty bits we find in the log we are parsing.'''
+
+
+        if option_string:
+            options = option_string.split(' ')
+        else:
+            options = []
+
+        optparser = optparse.OptionParser()
+        optparser.add_option('--sentry_dsn', '-r', dest='sentry_dsn', default='', help='')
+
+        opts, args = optparser.parse_args(args=options)
+
+        self.sentry_client = Client(opts.sentry_dsn)
 
         self.http_1x = {
             'requests': 0,
@@ -76,9 +90,10 @@ class HAProxyPygster(PygsterParser):
                         self.http_5x['bytes'] += int(line_log['bytes'])
 
             else:
-                raise PygsterParsingException("line: \n<<<%s>>>" % line)
+                raise PygsterParsingException("Failed match in line: \n<<<%s>>>" % line)
 
         except Exception as e:
+            self.sentry_client.captureException()
             raise PygsterParsingException("regmatch or contents failed with %s" % e)
 
 
