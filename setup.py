@@ -1,7 +1,7 @@
 
 
 __title__ = 'pygster_logparsers'
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 __author__ = 'Serg Belyakov  <serg@itlbs.ru>'
 __copyright__ = 'Copyright 2014 OnBeep, Inc. and Contributors'
 __license__ = 'Apache License, Version 2.0'
